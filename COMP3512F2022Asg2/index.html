@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/index.css">
+    <script src="starting-files/genres.json"></script>
+    <script src="starting-files/artists.json"></script>
+    <script src="starting-files/sample-songs.json"></script>
+    <script type="module" src="starting-files/song.js"></script>
+    <title>COMP3512F2022ASG2</title>
+</head>
+<body>
+    <header>
+        <div class="headerName">
+            <h1>COMP 3512 Assign2</h1> <br>
+            <a href='https://github.com/jpope229/COMP3512F2022Asg2'>Assignment Repository </a><br>
+            <div class="Names">Contributors:<br>
+                <a href='https://github.com/jpope229'>Justin Pope</a><br>
+                <a href='https://github.com/vannex21'>Juveluzel Lopena</a><br>
+            </div>
+        </div>
+        <div class="nav">
+            <a href="index.html">Home</a>
+            <button>Playlist</button>
+        </div>
+    </header>
+    <article class="searchView">
+        <div class="column left">
+          <h2>Basic Song Search</h2> 
+          <form action="index.html" method="get" id="filterBox">
+            <input type="radio" id="filterT" name="filterRadio" value="filterT">
+            <label for="filterT">By</label>
+            <label for="title">Title</label><br>
+            <input type="text" id="title" name="title"><br>
+            <input type="radio" id="filterA" name="filterRadio" value="filterA">
+            <label for="filterA">By</label>
+            <label for="artist">Artist</label><br>
+            <select form_id="filterBox" id="artist" name="artist">
+                <option value="" disabled selected>Select Artist</option>
+                
+            </select><br>
+            <input type="radio" id="filterG" name="filterRadio" value="filterG">
+            <label for="filterG">Select</label>
+            <label for="genre">Genre</label><br>
+            <select form_id="filterBox" id="genre" name="genre" >
+                <option value="" disabled selected>Select Genre</option>
+            </select><br>
+            <input type="reset" value="Clear">
+            <input type="submit" value="Filter" id="submit">
+          </form>
+        </div>
+        <div class="column right">
+          <h2>Browse/Search Results</h2>
+          <table id="results">
+            <thead id="headerRow">
+                <th id="title">Title</th>
+                <th id="artist">Artist</th>
+                <th id="year">Year</th>
+                <th id="genre">Genre</th>
+                <th id="popularity">Popularity</th>
+                <th id="add">Add to Playlist</th>
+            </thead>
+            <tbody id="tBody">
+
+            </tbody>
+        </table>
+        </div>
+    </article>
+    <footer>
+        <div>
+            COMP3512F2022<br>
+            Assign2
+            <a href='https://github.com/jpope229/COMP3512F2022Asg2'>Github Repository </a><br>
+        </div>
+</body>
+</html>
