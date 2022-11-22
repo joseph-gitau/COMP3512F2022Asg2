@@ -1,70 +1,59 @@
 // require assign2.js
 import { getapi, api } from "./assign2.js";
 
-const genreList1 = [];
-const artistList1 = [];
-const songData1 = [];
-// store response
-const response = await fetch(api);
-const data = await response.json();
-const songtp = JSON.stringify(data);
-const allSongs = JSON.parse(songtp);
-// console.log(genres);
-for (let i = 0; i < allSongs.length; i++) {
-  // console.log(genres[i]["title"]);
-  const tempgenre = allSongs[i]["genre"];
-  genreList1.push(tempgenre);
-}
-// console.log(genreList1);
-// loop through allSongs and store in artists
-for (let i = 0; i < allSongs.length; i++) {
-  const tempartist = allSongs[i]["artist"];
-  artistList1.push(tempartist);
-}
-// console.log(artistList1);
-// loop through allSongs and store in songsData
-for (let i = 0; i < allSongs.length; i++) {
-  const tempsong = allSongs[i];
-  songData1.push(tempsong);
-}
-// console.log(songData1);
-/* const temp_genre = JSON.stringify(genreList1);
-const genres = JSON.parse(temp_genre); */
-const genres = genreList1;
-const temp_artist = JSON.stringify(artistList1);
-const artists = JSON.parse(temp_artist);
-const temp_song = JSON.stringify(songData1);
-const songsData = JSON.parse(temp_song);
-
-/* // Calling that async function
-getapi(api).then((data) => {
-  //console.log(data);
-  const temp_genre = JSON.stringify(data.genreList1);
-  genres = JSON.parse(temp_genre);
-  console.log(genres);
-  const temp_artist = JSON.stringify(data.artistList1);
+// check if genres, artists, songsData are in localStorage
+// if not, get them from api
+// if yes, get them from localStorage
+if (
+  localStorage.getItem("genres") === null ||
+  localStorage.getItem("artists") === null ||
+  localStorage.getItem("songsData") === null
+) {
+  const genreList1 = [];
+  const artistList1 = [];
+  const songData1 = [];
+  // store response
+  const response = await fetch(api);
+  const data = await response.json();
+  const songtp = JSON.stringify(data);
+  const allSongs = JSON.parse(songtp);
+  // console.log(genres);
+  for (let i = 0; i < allSongs.length; i++) {
+    // console.log(genres[i]["title"]);
+    const tempgenre = allSongs[i]["genre"];
+    genreList1.push(tempgenre);
+  }
+  // console.log(genreList1);
+  // loop through allSongs and store in artists
+  for (let i = 0; i < allSongs.length; i++) {
+    const tempartist = allSongs[i]["artist"];
+    artistList1.push(tempartist);
+  }
+  // console.log(artistList1);
+  // loop through allSongs and store in songsData
+  for (let i = 0; i < allSongs.length; i++) {
+    const tempsong = allSongs[i];
+    songData1.push(tempsong);
+  }
+  // console.log(songData1);
+  /* const temp_genre = JSON.stringify(genreList1);
+    const genres = JSON.parse(temp_genre); */
+  const genres = genreList1;
+  const temp_artist = JSON.stringify(artistList1);
   const artists = JSON.parse(temp_artist);
-//   console.log(artists);
-  const temp_song = JSON.stringify(data.songData1);
+  const temp_song = JSON.stringify(songData1);
   const songsData = JSON.parse(temp_song);
-//   console.log(songsData);
 
-  const genres2 = JSON.parse(genreList);
-  console.log(genres2);
-  const tempGenre = JSON.stringify(data.genreList1);
-  const genres3 = JSON.parse(tempGenre);
-  // console.log(genres3);
-
-//   return { genres, artists, songsData };
-}); */
-// getapi(api);
-/* const genres = JSON.parse(genreList);
-const artists = JSON.parse(artistList);
-const songsData = JSON.parse(songList); 
-const genres = JSON.parse(genreList);
-const artists = JSON.parse(artistList);
-const songsData = JSON.parse(songList);*/
-// after getapi(api) finishes loading;
+  // store genres, artists, songsData in localStorage
+  localStorage.setItem("genres", JSON.stringify(genres));
+  localStorage.setItem("artists", JSON.stringify(artists));
+  localStorage.setItem("songsData", JSON.stringify(songsData));
+} else {
+  
+}
+const genres = JSON.parse(localStorage.getItem("genres"));
+  const artists = JSON.parse(localStorage.getItem("artists"));
+  const songsData = JSON.parse(localStorage.getItem("songsData"));
 console.log(genres);
 console.log(artists);
 console.log(songsData);
