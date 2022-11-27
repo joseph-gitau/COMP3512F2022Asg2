@@ -54,12 +54,14 @@ const genres = JSON.parse(localStorage.getItem("genres"));
 const artists = JSON.parse(localStorage.getItem("artists"));
 const songsData = JSON.parse(localStorage.getItem("songsData"));
 /* console.log(genres);
-console.log(artists);
-console.log(songsData);*/
+console.log(artists);*/
+console.log(songsData);
 
 // document.addEventListener("DOMContentLoaded", function () {
 //this array will store all the songs in the database
 const songsArray = [];
+// playlist array
+const playlist = [];
 
 for (let a of artists) {
   let option = document.createElement("option");
@@ -141,6 +143,9 @@ for (let s of songsData) {
   const playlistButton = document.createElement("button");
   //add data inside of td
   playlistButton.textContent = "Add";
+  playlistButton.setAttribute("class", "add-to-playlist");
+  // add song id to button
+  playlistButton.setAttribute("songID", s["song_id"]);
   //add button to the end of the row
   songRow.appendChild(playlistButton);
 
@@ -179,6 +184,8 @@ const createRow = (obj) => {
   const playlistButton = document.createElement("button");
   //add data inside of td
   playlistButton.textContent = "Add";
+  // add add-to-playlist class to button
+  playlistButton.classList.add("add-to-playlist");
   //add button to the end of the row
   row.appendChild(playlistButton);
 
@@ -637,16 +644,6 @@ const showSongDetails = function (song) {
   tableHeader.style.display = "none";
   console.log("Song passed: ", song);
   tableContent.innerHTML = "";
-  /* tableContent.innerHTML = `<h2>${song.title}</h2>
-  <p>Artist: ${song.artist.name}</p>
-  <p>Album: ${song.title}</p>
-  <p>Genre: ${song.genre.name}</p>
-  <p>Popularity: ${song.popularity}</p>
-  <p>Duration: ${song.duration}</p>
-  <p>Release Date: ${song.release_date}</p>
-  <p>Explicit: ${song.explicit}</p>
-  <p>Price: ${song.price}</p>`;
-}; */
   // convert duration to minutes and seconds
   const duration = song.details.duration;
   const minutes = Math.floor(duration / 60);
@@ -712,16 +709,154 @@ const showSongDetails = function (song) {
   chart.draw();
 };
 
-// onclick of table row, display song details
+// onclick of first td of each row, display song details
 const tableRow = document.querySelectorAll("tr");
 tableRow.forEach((row, index) => {
-  row.addEventListener("click", () => {
+  // first td of each row
+  const firstTd = row.firstElementChild;
+  firstTd.addEventListener("click", () => {
     const songId = row.getAttribute("data-id");
     const song = songsData.find((song) => {
-      return song.id == songId;
+      return song.song_id == songId;
     });
     console.log("Song: ", song);
     showSongDetails(song);
   });
 });
+
+// add to playlist function
+const addToPlaylist = function (song) {
+  console.log("Song passed: ", song);
+  // check if song is already in playlist array
+  const songInPlaylist = playlist.find((playlistSong) => {
+    return playlistSong.song_id == song.song_id;
+  });
+  // if song is not in playlist array, add it
+  if (!songInPlaylist) {
+    playlist.push(song);
+    console.log("Playlist: ", playlist);
+    // if song is already in playlist array, display message
+  } else {
+    alert("Song is already in playlist");
+  }
+};
+// onclick of add to playlist button on each row, add song to playlist
+const addToPlaylistBtn = document.querySelectorAll(".add-to-playlist");
+addToPlaylistBtn.forEach((btn, index) => {
+  btn.addEventListener("click", () => {
+    const songId = btn.getAttribute("songid");
+    console.log("Song id: ", songId);
+    console.log("Songs data: ", songsData);
+    const song = songsData.find((song) => {
+      return song.song_id == songId;
+    });
+    console.log("Song added to playlist: ", song);
+    addToPlaylist(song);
+  });
+});
+
+// display playlist function
+const displayPlaylist = function () {
+  tableContent.innerHTML = "";
+  // if playlist is empty, display message
+  if (playlist.length == 0) {
+    tableContent.innerHTML = "Playlist is empty";
+  } else {
+    // if playlist is not empty, display table
+    getTableContentPlaylist(playlist);
+  }
+};
+
+// onclick of playlist button, display playlist
+const playlistBtn = document.getElementById("playlist");
+playlistBtn.addEventListener("click", () => {
+  displayPlaylist();
+});
+
+const getTableContentPlaylist = (data) => {
+  // change table header add to playlist to remove from playlist
+  const tableHeader = document.getElementById("add");
+  tableHeader.innerHTML = `Remove from playlist`;
+  const pData = [];
+  // loop through the data and create a new array of data with title, artist, year, genre, popularity
+  data.map((item) => {
+    // const song_id = item.song_id;
+    const obj = {
+      title: item.title,
+      artist: item.artist.name,
+      year: item.year,
+      genre: item.genre.name,
+      popularity: item.details.popularity,
+      // song_id: item.song_id,
+    };
+    pData.push(obj);
+  });
+  // return pData;
+  pData.map((obj) => {
+    const row = createRowPlaylist(obj);
+    tableContent.appendChild(row);
+    // console.log(obj);
+  });
+  addPop();
+  color();
+};
+const createRowPlaylist = (obj) => {
+  const row = document.createElement("tr");
+  const objKeys = Object.keys(obj);
+  objKeys.map((key) => {
+    const cell = document.createElement("td");
+    cell.setAttribute("data-attr", key);
+    cell.innerHTML = obj[key];
+    cell.addEventListener("click", (e) => {
+      console.log(e.target);
+    });
+    cell.style.cursor = "pointer";
+    row.appendChild(cell);
+  });
+  // add button to the end of the row
+  const playlistButton = document.createElement("button");
+  //add data inside of td
+  playlistButton.textContent = "Remove";
+  // add add-to-playlist class to button
+  playlistButton.classList.add("remove-from-playlist");
+  // add song id to button
+  playlistButton.setAttribute("songid", song_id);
+  //add button to the end of the row
+  row.appendChild(playlistButton);
+  return row;
+};
+
+// onclick of remove from playlist button on each row, remove song from playlist
+const removeFromPlaylistBtn = document.querySelectorAll(".remove-from-playlist");
+removeFromPlaylistBtn.forEach((btn, index) => {
+  btn.addEventListener("click", () => {
+    const songId = btn.getAttribute("songid");
+    console.log("Song id: ", songId);
+    console.log("Songs data: ", songsData);
+    const song = songsData.find((song) => {
+      return song.song_id == songId;
+    });
+    console.log("Song removed from playlist: ", song);
+    removeFromPlaylist(song);
+  });
+});
+
+// remove from playlist function
+const removeFromPlaylist = function (song) {
+  console.log("Song passed: ", song);
+  // check if song is already in playlist array
+  const songInPlaylist = playlist.find((playlistSong) => {
+    return playlistSong.song_id == song.song_id;
+  });
+  // if song is in playlist array, remove it an display playlist again
+  if (songInPlaylist) {
+    const index = playlist.indexOf(songInPlaylist);
+    playlist.splice(index, 1);
+    console.log("Playlist: ", playlist);
+    displayPlaylist();
+    // if song is not in playlist array, display message
+  } else {
+    alert("Song is not in playlist");
+  }
+};
 
