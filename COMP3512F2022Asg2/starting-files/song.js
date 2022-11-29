@@ -174,9 +174,9 @@ const createRow = (obj) => {
     const cell = document.createElement("td");
     cell.setAttribute("data-attr", key);
     cell.innerHTML = obj[key];
-    cell.addEventListener("click", (e) => {
+    /* cell.addEventListener("click", (e) => {
       console.log(e.target);
-    });
+    }); */
     cell.style.cursor = "pointer";
     row.appendChild(cell);
   });
@@ -218,6 +218,7 @@ const getTableContent = (data) => {
   });
   addPop();
   color();
+  alternateRowColors();
 };
 // getTableContentFiltered
 const getTableContentFiltered = (data) => {
@@ -241,6 +242,7 @@ const getTableContentFiltered = (data) => {
   });
   addPop();
   color();
+  alternateRowColors();
 };
 
 // sort by title ascending or descending
@@ -530,12 +532,14 @@ tableButtons.forEach((button) => {
 });
 
 // alternate table row colors
-const tableRows = document.querySelectorAll("tr");
-tableRows.forEach((row, index) => {
-  if (index % 2 === 0) {
-    row.style.backgroundColor = "#00382b";
-  }
-});
+const alternateRowColors = function () {
+  const tableRows = document.querySelectorAll("tr");
+  tableRows.forEach((row, index) => {
+    if (index % 2 === 0) {
+      row.style.backgroundColor = "#00382b";
+    }
+  });
+};
 // get the 4th td element of each row and add a class of "popularity"
 const addPop = function () {
   const popularity = document.querySelectorAll("td:nth-child(5)");
@@ -642,23 +646,27 @@ const showSongDetails = function (song) {
   // hide table header
   const tableHeader = document.getElementById("headerRow");
   tableHeader.style.display = "none";
-  console.log("Song passed: ", song);
+  console.log("Song passed: ", songsData);
+  const raw_sondid = song.songID;
+  const newSong = songsData.find((song) => song.song_id === raw_sondid);
+  // console.log("New song: ", newSong);
+  // console.log("Raw songid: ", raw_sondid);
   tableContent.innerHTML = "";
   // convert duration to minutes and seconds
-  const duration = song.details.duration;
+  const duration = newSong.details.duration;
   const minutes = Math.floor(duration / 60);
   const seconds = duration % 60;
   const durationString = `${minutes}:${seconds}`;
   // anychart data table
   var data = [
     // { x: "bpm", value: song.details.bpm },
-    { x: "energy", value: song.analytics.energy },
+    { x: "energy", value: newSong.analytics.energy },
     // { x: "Loudness", value: song.details.loudness },
-    { x: "Danceability", value: song.analytics.danceability },
-    { x: "Valence", value: song.analytics.valence },
-    { x: "Acousticness", value: song.analytics.acousticness },
-    { x: "Liveness", value: song.analytics.liveness },
-    { x: "Speechiness", value: song.analytics.speechiness },
+    { x: "Danceability", value: newSong.analytics.danceability },
+    { x: "Valence", value: newSong.analytics.valence },
+    { x: "Acousticness", value: newSong.analytics.acousticness },
+    { x: "Liveness", value: newSong.analytics.liveness },
+    { x: "Speechiness", value: newSong.analytics.speechiness },
     // { x: "Popularity", value: song.details.popularity },
   ];
 
@@ -710,19 +718,29 @@ const showSongDetails = function (song) {
 };
 
 // onclick of first td of each row, display song details
-const tableRow = document.querySelectorAll("tr");
-tableRow.forEach((row, index) => {
-  // first td of each row
-  const firstTd = row.firstElementChild;
-  firstTd.addEventListener("click", () => {
-    const songId = row.getAttribute("data-id");
-    const song = songsData.find((song) => {
-      return song.song_id == songId;
-    });
-    console.log("Song: ", song);
-    showSongDetails(song);
+const displaySongDetails = function () {
+  const tableRow = document.querySelectorAll("tr");
+  tableRow.forEach((row, index) => {
+    // skip the first row
+    if (index > 0) {
+      // add to first td of each row
+      const firstTd = row.firstElementChild;
+      firstTd.addEventListener("click", (event) => {
+        // get the song id from tr songId attribute console.log("Song: ", songsArray);
+        const songId = row.getAttribute("songId");
+        console.log("Song id preview: ", songId);
+        // get the song from the songsArray
+        const song = songsArray.find((song) => {
+          return song.songID == songId;
+        });
+
+        console.log("Song is: ", song);
+        // call showSongDetails function
+        showSongDetails(song);
+      });
+    }
   });
-});
+};
 
 // add to playlist function
 const addToPlaylist = function (song) {
@@ -734,7 +752,14 @@ const addToPlaylist = function (song) {
   // if song is not in playlist array, add it
   if (!songInPlaylist) {
     playlist.push(song);
-    console.log("Playlist: ", playlist);
+    // console.log("Playlist: ", playlist);
+    // show success message and hide after 2 seconds
+    const successMessage = document.getElementById("successMessage");
+    successMessage.style.display = "block";
+    setTimeout(() => {
+      // hide success message
+      successMessage.style.display = "none";
+    }, 2000);
     // if song is already in playlist array, display message
   } else {
     alert("Song is already in playlist");
@@ -827,7 +852,9 @@ const createRowPlaylist = (obj) => {
 };
 
 // onclick of remove from playlist button on each row, remove song from playlist
-const removeFromPlaylistBtn = document.querySelectorAll(".remove-from-playlist");
+const removeFromPlaylistBtn = document.querySelectorAll(
+  ".remove-from-playlist"
+);
 removeFromPlaylistBtn.forEach((btn, index) => {
   btn.addEventListener("click", () => {
     const songId = btn.getAttribute("songid");
@@ -860,3 +887,14 @@ const removeFromPlaylist = function (song) {
   }
 };
 
+// document ready
+document.addEventListener("DOMContentLoaded", () => {
+  // add pop to the table
+  addPop();
+  // color the table
+  color();
+  // add alternating colors to the table
+  alternateRowColors();
+  // add onclick to each row
+  displaySongDetails();
+});
