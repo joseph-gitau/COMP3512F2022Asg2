@@ -1,5 +1,5 @@
 # COMP3512F2022Asg2
-COMP 3512
+# COMP 3512
 Assignment #2: Single-Page App
 Version: 1.0 Oct 25, 2022
 Version: 2.0 Nov 4, 2022, changes in yellow

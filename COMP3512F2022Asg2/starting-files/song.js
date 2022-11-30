@@ -54,8 +54,8 @@ const genres = JSON.parse(localStorage.getItem("genres"));
 const artists = JSON.parse(localStorage.getItem("artists"));
 const songsData = JSON.parse(localStorage.getItem("songsData"));
 /* console.log(genres);
-console.log(artists);*/
-console.log(songsData);
+console.log(artists);
+console.log(songsData);*/
 
 // document.addEventListener("DOMContentLoaded", function () {
 //this array will store all the songs in the database
@@ -63,26 +63,62 @@ const songsArray = [];
 // playlist array
 const playlist = [];
 
-for (let a of artists) {
+// unique artists function
+const getUniqueArtists = function (artists) {
+  const uniqueArtists = [...new Set(artists.map((item) => item.name))];
+  // get artist ids and store in array
+  const artistIDs = [];
+  uniqueArtists.map((artist) => {
+    const artistID = artists.find((item) => item.name === artist).id;
+    artistIDs.push(artistID);
+  });
+  // console.log(artistIDs);
+  // merge artist names and ids into one array
+  const artistNamesAndIDs = [];
+  for (let i = 0; i < uniqueArtists.length; i++) {
+    artistNamesAndIDs.push({
+      name: uniqueArtists[i],
+      id: artistIDs[i],
+    });
+  }
+  // console.log(artistNamesAndIDs);
+  return artistNamesAndIDs;
+};
+// call getUniqueArtists function
+const uniqueArtists = getUniqueArtists(artists);
+for (let a of uniqueArtists) {
   let option = document.createElement("option");
   option.text = a["name"];
   option.value = a["id"];
   let aSelect = document.getElementById("artist");
   aSelect.appendChild(option);
 }
-// get unique artists
-const getUniqueArtists = (data) => {
-  const uniqueArtists = [];
-  data.forEach((item) => {
-    if (!uniqueArtists.includes(item.artist["name"])) {
-      uniqueArtists.push(item.artist["name"]);
-    }
-  });
-  return uniqueArtists;
-};
-// console.log("unique artists:", getUniqueArtists(songsData));
 
-for (let g of genres) {
+console.log(genres);
+// function to get unique genres
+const getUniqueGenres = function (genres) {
+  const uniqueGenres = [...new Set(genres.map((item) => item.name))];
+  // get genre ids and store in array
+  const genreIDs = [];
+  uniqueGenres.map((genre) => {
+    const genreID = genres.find((item) => item.name === genre).id;
+    genreIDs.push(genreID);
+  });
+  // console.log(genreIDs);
+  // merge genre names and ids into one array
+  const genreNamesAndIDs = [];
+  for (let i = 0; i < uniqueGenres.length; i++) {
+    genreNamesAndIDs.push({
+      name: uniqueGenres[i],
+      id: genreIDs[i],
+    });
+  }
+  // console.log(genreNamesAndIDs);
+  return genreNamesAndIDs;
+};
+// call getUniqueGenres function
+const uniqueGenres = getUniqueGenres(genres);
+for (let g of uniqueGenres) {
   let option = document.createElement("option");
   option.text = g["name"];
   option.value = g["id"];
@@ -161,7 +197,7 @@ for (let s of songsData) {
 }
 
 //TEST outputting the array to console
-console.log(songsArray);
+// console.log(songsArray);
 
 //TESTING sorting for columns, console.log which header was clicked
 const tableContent = document.getElementById("tBody");
@@ -185,7 +221,7 @@ const createRow = (obj, adtn) => {
   const songID = songsArray.find((song) => {
     return song.title === obj.title;
   });
-  console.log(songID.songID);
+  // console.log(songID.songID);
   // add button to the end of the row
   const playlistButton = document.createElement("button");
   //add data inside of td
@@ -636,11 +672,16 @@ const filterForm = function () {
     // filter by genre
     if (filterG.checked) {
       const filterTermG = document.getElementById("genre").value;
+      // console.log("the genre value is: ", filterTermG);
+      // console.log("the songsArray is: ", songsArray);
+      // get genre name from genres by id
+      const genreName = genres.find((genre) => genre.id == filterTermG);
+      // console.log("the genre name is: ", genreName["name"]);
       tableContent.innerHTML = "";
       const sortedG = songsArray.filter((song) => {
-        return song.genre["id"] == filterTermG;
+        return song.genre == genreName["name"];
       });
-      console.log("Sorted by Genre: ", sortedG);
+      // console.log("Sorted by Genre: ", sortedG);
       //if sorted is not empty, display the filtered table
       if (sortedG) {
         // displayTable(sorted);
@@ -871,6 +912,10 @@ const createRowPlaylist = (obj) => {
   //add button to the end of the row
   row.appendChild(playlistButton);
   row.setAttribute("songid", song_id.songID);
+  // add click event to button
+  playlistButton.addEventListener("click", () => {
+    removeFromPlaylist(song_id);
+  });
   return row;
 };
 
@@ -898,18 +943,30 @@ const removeFromPlaylist = function (song) {
   console.log("Song passed: ", song);
   // check if song is already in playlist array
   const songInPlaylist = playlist.find((playlistSong) => {
-    return playlistSong.song_id == song.song_id;
+    return playlistSong.song_id == song.songID;
   });
-  // if song is in playlist array, remove it an display playlist again
-  if (songInPlaylist) {
-    const index = playlist.indexOf(songInPlaylist);
+  console.log("Song in playlist: ", playlist);
+  // if song is not in playlist array, display message
+  if (!songInPlaylist) {
+    alert("Song is not in playlist");
+    // if song is already in playlist array, remove it
+  } else {
+    const index = playlist.indexOf(song.song_id);
+    console.log("Index: ", index);
     playlist.splice(index, 1);
     console.log("Playlist: ", playlist);
-    displayPlaylist();
-    // if song is not in playlist array, display message
-  } else {
-    alert("Song is not in playlist");
+    // show success message and hide after 2 seconds
+    const successMessage = document.getElementById("successMessage");
+    successMessage.style.display = "block";
+    setTimeout(() => {
+      // hide success message
+      successMessage.style.display = "none";
+    }, 2000);
   }
+
+  // display playlist
+  displayPlaylist();
+
 };
 
 // document ready
