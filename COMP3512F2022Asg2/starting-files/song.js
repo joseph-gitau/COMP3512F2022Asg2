@@ -809,6 +809,8 @@ const addToPlaylist = function (song) {
     // console.log("Playlist: ", playlist);
     // show success message and hide after 2 seconds
     const successMessage = document.getElementById("successMessage");
+    // change message to Song Added to Playlist
+    successMessage.innerHTML = "Song Added to Playlist";
     successMessage.style.display = "block";
     setTimeout(() => {
       // hide success message
@@ -951,12 +953,15 @@ const removeFromPlaylist = function (song) {
     alert("Song is not in playlist");
     // if song is already in playlist array, remove it
   } else {
-    const index = playlist.indexOf(song.song_id);
-    console.log("Index: ", index);
-    playlist.splice(index, 1);
-    console.log("Playlist: ", playlist);
+    for (let i = 0; i < playlist.length; i++) {
+      if (playlist[i].song_id == song.songID) {
+        playlist.splice(i, 1);
+      }
+    }
     // show success message and hide after 2 seconds
     const successMessage = document.getElementById("successMessage");
+    // change message to song removed from playlist
+    successMessage.innerHTML = "Song removed from playlist";
     successMessage.style.display = "block";
     setTimeout(() => {
       // hide success message
