@@ -29,9 +29,39 @@
         <div class="nav">
             <a href="index.html" class="custom-btn">Home</a>
             <button class="custom-btn" id="playlist">Playlist</button>
+            <button class="custom-btn" id="closeView">Close view</button>
+            <!-- credits -->
+            <div class="credits">
+                <button class="custom-btn crdtshw">Credits</button>
+                <div class="cont">
+                    <ul>
+                        <li>Justin Pope</li>
+                        <li>Juveluzel Lopena</li>
+                        <li>AnyChart</li>
+                        <li>W3Schools</li>
+                        <hr>
+                        <li><a href="#">Github url</a></li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
     </header>
     <article class="searchView">
+        <!-- playlist summary view -->
+        <div class="playlistSummary">
+            <h2>Playlist Summary</h2>
+            <div class="summary">
+                <div class="summaryInfo">
+                    <h4>Songs in playlist:</h4>
+                    <p id="playSongs"></p>
+                </div>
+                <div class="summaryInfo">
+                    <h4>Average song Popularity:</h4>
+                    <p id="playPopularity"></p>
+                </div>
+            </div>
+        </div>
         <div class="column left">
             <h2>Basic Song Search</h2>
             <form action="index.html" method="get" id="filterBox">
